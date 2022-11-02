@@ -1,5 +1,6 @@
 package com.example.client.donwload.Client.Download.File.service;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import java.io.*;
@@ -11,8 +12,20 @@ import java.util.stream.Stream;
 @Service
 public class RestClientService {
 
-    @Autowired
-    private RestTemplate restTemplate;
+    private Path fileStoragePathIts;
+    private  String fileStorageLocationIts;
+    private Path fileStoragePathJts;
+    private  String fileStorageLocationJts;
+    public RestClientService(@Value("${file.storage.locationIts}") String fileStorageLocationIts, @Value("${file.storage.locationJts}") String fileStorageLocationJts) {
+        fileStoragePathIts = Paths.get(fileStorageLocationIts).toAbsolutePath().normalize();
+        this.fileStorageLocationIts = fileStorageLocationIts;
+
+        fileStoragePathJts = Paths.get(fileStorageLocationJts).toAbsolutePath().normalize();
+        this.fileStorageLocationJts = fileStorageLocationJts;
+    }
+
+    //    @Autowired
+//    private RestTemplate restTemplate;
 
 //    public void getDataJts() {
 //
@@ -37,10 +50,9 @@ public class RestClientService {
 //    }
 
     public void getItsFile() {
-        String src = "\\\\10.20.201.111\\c\\apiprintertest\\ITS\\";
         String dest = "C:\\WILLIAM\\00.IBO-D\\Test_Download_File\\ITS\\";
 
-        try (Stream<Path> paths = Files.walk(Paths.get(src))) {
+        try (Stream<Path> paths = Files.walk(Paths.get(fileStorageLocationIts))) {
             paths
                     .filter(Files::isRegularFile)
                     .forEach(path -> {
@@ -48,7 +60,7 @@ public class RestClientService {
                             Files.copy(path, Path.of(dest + path.getFileName()));
 //                            System.out.println("path : " + path);
 //                            System.out.println("dest: " + dest + path.getFileName());
-                            Files.delete(Path.of(src + path.getFileName()));
+                            Files.delete(Path.of(fileStorageLocationIts + "\\" + path.getFileName()));
                         } catch (IOException e) {
                             throw new RuntimeException(e);
                         }
@@ -59,10 +71,9 @@ public class RestClientService {
     }
 
     public void getJtsFile() {
-        String src = "\\\\10.20.201.111\\c\\apiprintertest\\JTS\\";
         String dest = "C:\\WILLIAM\\00.IBO-D\\Test_Download_File\\JTS\\";
 
-        try (Stream<Path> paths = Files.walk(Paths.get(src))) {
+        try (Stream<Path> paths = Files.walk(Paths.get(fileStorageLocationJts))) {
             paths
                     .filter(Files::isRegularFile)
                     .forEach(path -> {
@@ -70,7 +81,7 @@ public class RestClientService {
                             Files.copy(path, Path.of(dest + path.getFileName()));
 //                            System.out.println("path : " + path);
 //                            System.out.println("dest: " + dest + path.getFileName());
-                            Files.delete(Path.of(src + path.getFileName()));
+                            Files.delete(Path.of(fileStorageLocationJts + "\\" + path.getFileName()));
                         } catch (IOException e) {
                             throw new RuntimeException(e);
                         }
