@@ -4,20 +4,22 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Controller;
 
-import java.io.IOException;
-
 @Controller
 public class RestClientController {
     @Autowired
     private RestClientService restClientService;
 
+    public RestClientController(RestClientService restClientService) {
+        this.restClientService = restClientService;
+    }
+
     //EVERY 1 MINUTES ON WEEKDAYS
     @Scheduled(cron = "0 */1 * * * MON-FRI")
-    public void downloadFileIts() throws IOException {
-        restClientService.getItsFile();
+    public void downloadFileIts() {
+        restClientService.downloadFileIts();
     }
     @Scheduled(cron = "0 */1 * * * MON-FRI")
-    public void downloadFileJts() throws IOException {
-        restClientService.getJtsFile();
+    public void downloadFileJts()  {
+        restClientService.downloadFileJts();
     }
 }
